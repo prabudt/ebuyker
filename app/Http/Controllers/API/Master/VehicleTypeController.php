@@ -4,14 +4,14 @@ namespace App\Http\Controllers\API\Master;
 
 use App\Http\Controllers\Controller;
 use JWTAuth;
-use App\Models\UserType;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
-class UserTypeController extends Controller
+class VehicleTypeController extends Controller
 {
     public function index(Request $request)
     {
-        $data = UserType::where('is_admin', 0)->where('active_flag', '1')->get();
+        $data = VehicleType::where('active_flag', '1')->get();
         return $this->sendSuccess($data);  
     }
  

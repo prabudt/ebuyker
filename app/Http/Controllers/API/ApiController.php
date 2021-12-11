@@ -30,7 +30,8 @@ class ApiController extends Controller
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
-            return $this->validationError($validator->errors());
+            $errors = objectToSingle($validator->errors());
+            return $this->validationError($errors);
         }
 
         //Request is valid, create new user
@@ -150,7 +151,19 @@ class ApiController extends Controller
             return $this->validationError($errors);
         } else {
             $users = User::where('mobile_no', $params['mobile_no'])->first();
-            $token = $this->generateToken($users);
+            if(!empty($users) ) {
+
+                if(!empty($users->otp) && $params['otp'] == $users->otp) {
+                    $token = $this->generateToken($users);
+                } else {
+                    $message = 'Your OTP is invalid';
+                    return $this->validationError($message);
+                }
+               
+            } else {
+                $message = 'Mobile Number is invalid';
+                return $this->validationError($message);
+            }
         }
         $message = 'Logged in successfully';
         return $this->sendSuccessWithToken($users, $message, $token);
@@ -188,6 +201,31 @@ class ApiController extends Controller
                     $message = $ex->getMessage();
                 }
             }
+            return $this->validationError($message);
+        }
+
+    }
+
+    public function approveUser(Request $request)
+    {
+        $params = $this->getRequest($request);        
+        //valid credential
+        $validator = Validator::make($params, [
+            'mobile_no' => 'required|digits:10',
+            'approve_flag' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = objectToSingle($validator->errors());
+            return $this->validationError($errors);
+        } else {
+            $users = User::where('mobile_no', $params['mobile_no'])->first();
+            if(!empty($users)) {
+                $users->update(['approval_flag' => $params['approve_flag']]);
+                $message = "Approved successfully.";  
+                return $this->sendSuccess($users, $message);
+            } else {
+                $message = 'Oops! Your login credentials are invalid.';
+            } 
             return $this->validationError($message);
         }
 

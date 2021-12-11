@@ -131,7 +131,7 @@ class Controller extends BaseController
     protected function validationError($response, $status = 200)
     {
         return response()->json(
-            $this->frameResponse(true, $status, 'Validation Error', $this->sendResponse($response)), $status);
+            $this->frameResponse(true, $status, $response, $this->sendResponse($response)), $status);
     }
 
     /**
