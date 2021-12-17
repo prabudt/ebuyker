@@ -40,8 +40,8 @@ if (! function_exists('fileUploadStorage')) {
         $date = date("Y-m-d H:i:s");
         $rand = strtotime($date);
         $fileName = $rand.'_'.$data->getClientOriginalName();
-        $filePath = $data->storeAs('/', $fileName, 'public');      
-        return Storage::disk('public')->url($filePath);
+        $filePath = $data->storeAs('/', $fileName, 'do_spaces');      
+        return Storage::disk('do_spaces')->url($filePath);
     }
     
 }
