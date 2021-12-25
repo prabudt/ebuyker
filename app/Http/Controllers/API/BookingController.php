@@ -24,13 +24,13 @@ class BookingController extends Controller
 
         $data = Booking::with(['loads.loadCreatedBy','loads.vehicleType', 'loads.vehicles', 'users'])
                 ->where('user_id','>=', JWTAuth::user()->id);
+                
         if(isset($params['from_date']) && isset($params['to_date'])) {
             $fromDate = Carbon::parse($params['from_date'])->format('Y-m-d');
             $toDate = Carbon::parse($params['to_date'])->format('Y-m-d');
             $data->whereDate('created_at','>=', $fromDate);
             $data->whereDate('created_at','<=', $toDate);
         }
-        $data = 
 
 
         $data = $data->get();
