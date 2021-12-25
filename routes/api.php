@@ -6,6 +6,7 @@ use App\Http\Controllers\API\Master\VehicleTypeController;
 use App\Http\Controllers\API\VehiclesController;
 use App\Http\Controllers\API\LoadController;
 use App\Http\Controllers\API\TruckController;
+use App\Http\Controllers\API\BookingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,5 +47,8 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     });
     Route::group(['prefix'=>'driver-transporter'],function() {
         Route::resource('truck', TruckController::class);
+    });
+    Route::group(['prefix'=>'load'],function() {
+        Route::resource('booking', BookingController::class);
     });
 });

@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 use JWTAuth;
+use App\Models\Booking;
 use App\Models\Loads;
 
-class LoadController extends Controller
+class BookingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,30 +21,16 @@ class LoadController extends Controller
     public function index(Request $request)
     {
         $params = $this->getRequest($request);
-        $currentDate = Carbon::now()->format('Y-m-d');
 
-        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking'])->where('active_flag', '1');
-        if(isset($params['is_expiry']) && $params['is_expiry'] == 1 ) {
-            $data->whereDate('pickup_date','<=',$currentDate);
-        } elseif(isset($params['is_expiry']) && $params['is_expiry'] == 0 ) {
-            $data->whereDate('pickup_date','>=', $currentDate);
-        } 
-
-        if(isset($params['from_location']) && $params['to_location']) {
-            $data->where('load_location','like', '%' .$params['from_location']. '%');
-            $data->where('unload_location','like', '%' .$params['to_location']. '%');
+        $data = Booking::with(['loads.loadCreatedBy','loads.vehicleType', 'loads.vehicles', 'users'])
+                ->where('user_id','>=', JWTAuth::user()->id);
+        if(isset($params['from_date']) && isset($params['to_date'])) {
+            $fromDate = Carbon::parse($params['from_date'])->format('Y-m-d');
+            $toDate = Carbon::parse($params['to_date'])->format('Y-m-d');
+            $data->whereDate('created_at','>=', $fromDate);
+            $data->whereDate('created_at','<=', $toDate);
         }
-
-        if(isset($params['show_booking']) && $params['show_booking'] == 1) {
-            $data->doesntHave('booking')->orWhereHas('booking', function($q){
-                $q->where('user_id', JWTAuth::user()->id);
-            });
-        }
-        
-        if(isset($params['show']) && $params['show'] == true ) {
-        } else {
-            $data->where('user_id', JWTAuth::user()->id);
-        }
+        $data = 
 
 
         $data = $data->get();
@@ -71,17 +58,7 @@ class LoadController extends Controller
         
         $params = $this->getRequest($request);
         $validator = Validator::make($params, [
-            'load_location' => 'required',
-            'unload_location' => 'required',
-            'pickup_date' => 'required|date',
-            'vehicle_type_id' => 'required',
-            'vehicle_id' => 'required',
-            'material_type' => 'required',
-            'material_weight' => 'required',
-            'material_length' => 'required',
-            'material_width' => 'required',
-            'material_height' => 'required',
-            'amount' => 'required|numeric|between:0,999999999.99'
+            'load_id' => 'required|numeric|unique:booking_load,load_id,null,null'
         ]);
 
         //Send failed response if request is not valid
@@ -89,13 +66,17 @@ class LoadController extends Controller
             $errors = objectToSingle($validator->errors());
             return $this->validationError($errors);
         }
-        // dd($params);
-        $params['user_id'] = JWTAuth::user()->id;
-        $params['pickup_date'] = date('Y-m-d H:m:s', \strtotime($params['pickup_date']));
-        $response = Loads::create($params);
-        $message = 'Load created successfully.';
-
-        return $this->sendSuccess($response, $message);
+        $loadList = Loads::find($params['load_id']); 
+        if(!empty($loadList)) {
+            $params['user_id'] = JWTAuth::user()->id;
+            $params['booking_amount'] = $loadList->amount;
+            $response = Booking::create($params);
+            $message = 'Booking successfully.';
+            return $this->sendSuccess($response, $message);
+    
+        } else {
+            return $this->validationError('Oops! Loads does not exist.');
+        }
         
     }
 
@@ -107,7 +88,7 @@ class LoadController extends Controller
      */
     public function show($id)
     {
-        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles'])->where('active_flag', '1')->find($id);
+        $data = Loads::with(['vehicleType','vehicles'])->where('active_flag', '1')->find($id);
         return $this->sendSuccess($data);
     }
 
@@ -160,10 +141,6 @@ class LoadController extends Controller
      */
     public function destroy($id)
     {
-       
-        $response = Loads::destroy($id);
-        $message = 'Load cancelled successfully.';
-
-        return $this->sendSuccess($response, $message);
+        //
     }
 }
