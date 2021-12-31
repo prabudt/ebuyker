@@ -22,7 +22,7 @@ class LoadController extends Controller
         $params = $this->getRequest($request);
         $currentDate = Carbon::now()->format('Y-m-d');
 
-        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking.users'])->where('active_flag', '1');
+        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking.users.truckData.truckFileFata'])->where('active_flag', '1');
         if(isset($params['is_expiry']) && $params['is_expiry'] == 1 ) {
             $data->whereDate('pickup_date','<=',$currentDate);
         } elseif(isset($params['is_expiry']) && $params['is_expiry'] == 0 ) {
@@ -164,10 +164,14 @@ class LoadController extends Controller
      */
     public function destroy($id)
     {
-       
-        $response = Loads::destroy($id);
-        $message = 'Load cancelled successfully.';
-
-        return $this->sendSuccess($response, $message);
+        $data = Loads::find($id);
+        if($data->is_expiry == 0) {
+            $response = Loads::destroy($id);
+            $message = 'Load cancelled successfully.';
+            return $this->sendSuccess($response, $message);
+        } else {
+            $message = 'Load already expired.';  
+            return $this->validationError($message);
+        }
     }
 }

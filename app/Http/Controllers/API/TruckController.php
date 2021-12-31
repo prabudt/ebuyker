@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use JWTAuth;
 use App\Models\Truck;
 use App\Models\Vehicles;
+use App\Models\StoreFileData;
 
 class TruckController extends Controller
 {
@@ -23,7 +24,7 @@ class TruckController extends Controller
         $params = $this->getRequest($request);
         $currentDate = Carbon::now()->format('Y-m-d');
 
-        $data = Truck::with(['vehicleType','vehicles', 'user'])->where('active_flag', '1');        
+        $data = Truck::with(['vehicleType','vehicles', 'user', 'truckFileFata'])->where('active_flag', '1');        
         
         if(isset($params['show']) && $params['show'] == true ) {
         } else {
@@ -58,15 +59,15 @@ class TruckController extends Controller
         $validator = Validator::make($params, [
             'truck_name' => 'required',
             'truck_number' =>'required|unique:truck,truck_number,null,null,active_flag,1',
-            'truck_image' => 'required|mimes:jpg,jpeg,png|max:512',
+            // 'truck_image' => 'required|mimes:jpg,jpeg,png|max:512',
             'location' => 'required',
             'vehicle_type_id' => 'required',
             'vehicle_name' => 'required',
             'licene_no' => 'required',
-            'licene_front' => 'required|mimes:jpg,jpeg,png|max:512',
-            'licene_back' => 'required|mimes:jpg,jpeg,png|max:512',
+            // 'licene_front' => 'required|mimes:jpg,jpeg,png|max:512',
+            // 'licene_back' => 'required|mimes:jpg,jpeg,png|max:512',
             'rc_book_number' => 'required',
-            'rc_image' => 'required|mimes:jpg,jpeg,png|max:512'
+            // 'rc_image' => 'required|mimes:jpg,jpeg,png|max:512'
         ]);
 
         //Send failed response if request is not valid
@@ -76,13 +77,18 @@ class TruckController extends Controller
         }
         $vechileCreate['vehicle_type_id'] = $params['vehicle_type_id'];
         $vechileCreate['name'] = $params['vehicle_name'];
-        $vechileResult = Vehicles::create($vechileCreate);
+
+        $vechileResult = Vehicles::where('name', 'like', '%' . $params['vehicle_name'] . '%')->first();
+        if(empty($vechileResult)) {
+            $vechileResult = Vehicles::create($vechileCreate);
+        }
+        
 
         $params['user_id'] = JWTAuth::user()->id;
-        $params['truck_image'] = fileUploadStorage($params['truck_image']);
+       /*  $params['truck_image'] = fileUploadStorage($params['truck_image']);
         $params['licene_front'] = fileUploadStorage($params['licene_front']);
         $params['licene_back'] = fileUploadStorage($params['licene_back']);
-        $params['rc_image'] = fileUploadStorage($params['rc_image']);
+        $params['rc_image'] = fileUploadStorage($params['rc_image']); */
         $params['vehicle_id'] = $vechileResult->id;
         $response = Truck::create($params);
         $message = 'Truck created successfully.';
@@ -152,6 +158,37 @@ class TruckController extends Controller
      */
     public function destroy($id)
     {
-        //
+        
     }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function fileStore(Request $request)
+    {
+        $params = $this->getRequest($request);
+
+        $validator = Validator::make($params, [
+            'truck_id' => 'required',
+            'truck_type' => 'required|unique:store_file_data,truck_type,null,null,truck_id,'.$params['truck_id'],
+            'file' => 'required|mimes:jpg,jpeg,png|max:512'
+        ],["truck_type.unique" => "Truck type against truck id already exists"]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails()) {
+            $errors = objectToSingle($validator->errors());
+            return $this->validationError($errors);
+        }
+
+        $params['file'] = fileUploadStorage($params['file']);
+        $response = StoreFileData::create($params);
+        $message = 'Data created successfully.';
+
+        return $this->sendSuccess($response, $message);
+    }
+
+
 }

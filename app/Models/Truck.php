@@ -51,6 +51,9 @@ class Truck extends Model
         'updated_at' => 'datetime:Y-m-d H:m:s',
     ];
 
+    protected $hidden = ['truck_image','licene_front','licene_back','rc_image'];
+
+
     // Motters To Use Created To data Only
     public function getCreatedAtAttribute($date)
     {
@@ -72,6 +75,10 @@ class Truck extends Model
 
     public function user() {
         return $this->belongsTo('App\\Models\\user', 'user_id');
+    }
+
+    public function truckFileFata() {
+        return $this->hasMany('App\\Models\\StoreFileData', 'truck_id');
     }
 
     public function getIsExpiryAttribute() {

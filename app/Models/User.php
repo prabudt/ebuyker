@@ -28,6 +28,7 @@ class User extends Authenticatable implements JWTSubject
         'user_type_id',
         'address',
         'approval_flag',
+        'profile_picture',
         'active_flag'
     ];
 
@@ -38,7 +39,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        'remember_token'
     ];
 
     /**
@@ -69,5 +70,14 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function userType() {
+        return $this->belongsTo('App\\Models\\user_type', 'user_type_id');
+    }
+
+    public function truckData()
+    {
+        return $this->hasOne('App\\Models\\Truck', 'user_id');
     }
 }

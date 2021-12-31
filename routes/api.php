@@ -32,8 +32,14 @@ Route::post('user-approve', [ApiController::class, 'approveUser']);
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('logout', [ApiController::class, 'logout']);
     Route::post('change-password', [ApiController::class, 'changePassword']);
-    
-    Route::get('get_user', [ApiController::class, 'get_user']);
+
+    Route::post('update-user', [ApiController::class, 'updateUser']);    
+    Route::get('get-user', [ApiController::class, 'getUser']);
+
+    Route::post('feedback/store', [ApiController::class, 'feedbackStore']);
+    Route::get('feedback', [ApiController::class, 'feedbackGet']);
+
+
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{id}', [ProductController::class, 'show']);
     Route::post('create', [ProductController::class, 'store']);
@@ -48,6 +54,8 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::group(['prefix'=>'driver-transporter'],function() {
         Route::resource('truck', TruckController::class);
     });
+
+    Route::any('file-store', [TruckController::class, 'fileStore']);
     Route::group(['prefix'=>'load'],function() {
         Route::resource('booking', BookingController::class);
     });

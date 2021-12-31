@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use JWTAuth;
 use App\Models\User;
+use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Mail;
 use Auth;
+
 
 class ApiController extends Controller
 {
@@ -243,5 +245,89 @@ class ApiController extends Controller
         }
         $user->update(['otp'=>NULL]);
  		return $token;
+    }
+
+
+    public function updateUser(Request $request)
+    {
+        $params = $this->getRequest($request,['name', 'email', 'profile_picture', 'address']); 
+        $users = User::find(JWTAuth::user()->id); 
+        if(!empty($users)) {
+            if(isset($params['profile_picture'])) {
+                $validator = Validator::make($params, [
+                    'profile_picture' => 'mimes:jpg,jpeg,png|max:512'
+                ]);
+        
+                //Send failed response if request is not valid
+                if ($validator->fails()) {
+                    $errors = objectToSingle($validator->errors());
+                    return $this->validationError($errors);
+                }
+            }
+
+            if(isset($params['profile_picture'])) {
+                $params['profile_picture'] = fileUploadStorage($params['profile_picture']);
+            }
+            // dd($params);
+            $users->update($params);
+            $message = 'Data created successfully.';
+
+            return $this->sendSuccess($users, $message);
+        } else {
+            $errorMessage = 'Sorry, user does not exist';
+            return $this->validationError($errorMessage);
+        }   
+    }
+
+    public function getUser(Request $request)
+    {
+        $params = $this->getRequest($request); 
+
+        $users = User::find(JWTAuth::user()->id); 
+        if(!empty($users)) {
+            return $this->sendSuccess($users);
+        } else {
+            $errorMessage = 'Sorry, user does not exist';
+            return $this->validationError($errorMessage);
+        }   
+    }
+
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function feedbackStore(Request $request)
+    {
+        $params = $this->getRequest($request);
+
+        $validator = Validator::make($params, [
+            'rating' => 'required|min:1|max:5|numeric',
+            'comment' => 'required'
+        ]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails()) {
+            $errors = objectToSingle($validator->errors());
+            return $this->validationError($errors);
+        }
+
+        $params['user_id'] = JWTAuth::user()->id;
+        $response = Feedback::create($params);
+        $message = 'Feedback posted successfully.';
+
+        return $this->sendSuccess($response, $message);
+    }
+
+    public function feedbackGet(Request $request)
+    {
+        $params = $this->getRequest($request); 
+
+        $data = Feedback::with('user')->where('user_id', JWTAuth::user()->id)->get();
+       
+        return $this->sendSuccess($data);
+       
     }
 }
