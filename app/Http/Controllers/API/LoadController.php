@@ -22,7 +22,7 @@ class LoadController extends Controller
         $params = $this->getRequest($request);
         $currentDate = Carbon::now()->format('Y-m-d');
 
-        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking'])->where('active_flag', '1');
+        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking.users'])->where('active_flag', '1');
         if(isset($params['is_expiry']) && $params['is_expiry'] == 1 ) {
             $data->whereDate('pickup_date','<=',$currentDate);
         } elseif(isset($params['is_expiry']) && $params['is_expiry'] == 0 ) {
@@ -38,6 +38,10 @@ class LoadController extends Controller
             $data->doesntHave('booking')->orWhereHas('booking', function($q){
                 $q->where('user_id', JWTAuth::user()->id);
             });
+        }
+
+        if(isset($params['is_customer_view'])) {
+            $data->has('booking');
         }
         
         if(isset($params['show']) && $params['show'] == true ) {
