@@ -250,7 +250,7 @@ class ApiController extends Controller
 
     public function updateUser(Request $request)
     {
-        $params = $this->getRequest($request,['name', 'email', 'profile_picture', 'address']); 
+        $params = $request->except(['password','mobile_no','is_admin','user_type_id']);//$this->getRequest($request,['name', 'email', 'profile_picture', 'address']); 
         $users = User::find(JWTAuth::user()->id); 
         if(!empty($users)) {
             if(isset($params['profile_picture'])) {
