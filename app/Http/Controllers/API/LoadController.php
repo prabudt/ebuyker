@@ -111,7 +111,7 @@ class LoadController extends Controller
      */
     public function show($id)
     {
-        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles'])->where('active_flag', '1')->find($id);
+        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking.users.truckData.truckFileFata'])->where('active_flag', '1')->find($id);
         return $this->sendSuccess($data);
     }
 
