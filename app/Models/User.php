@@ -29,6 +29,7 @@ class User extends Authenticatable implements JWTSubject
         'address',
         'approval_flag',
         'profile_picture',
+        'approval_date',
         'active_flag'
     ];
 
@@ -51,6 +52,10 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    public function getData() {
+        return $this->with(['userType'])->where('is_admin', 0)->get();
+    }
+
     
     // Motters To Use Created To data Only
     public function getCreatedAtAttribute($date)
@@ -63,6 +68,11 @@ class User extends Authenticatable implements JWTSubject
         return convertUTCToLocal($date);
     }
 
+    public function getApprovalDateAttribute($date)
+    {
+        return isset($date) && !empty($date) ? convertUTCToLocal($date) : '';
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -73,15 +83,12 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function userType() {
-        return $this->belongsTo('App\\Models\\user_type', 'user_type_id');
+        return $this->belongsTo('App\\Models\\UserType', 'user_type_id');
     }
 
     public function truckData()
     {
         return $this->hasOne('App\\Models\\Truck', 'user_id');
     }
-
-    public function getData() {
-        return $this->where('is_admin', 0)->get();
-    }
+    
 }

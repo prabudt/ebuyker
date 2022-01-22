@@ -43,7 +43,7 @@
             <a href="{{url('/')}}" class="nav-link {{ request()->routeIs('home') ? 'active' : ''}}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
-                Dashboard
+              {{ __('Dashboard') }}
                 <!-- <i class="right fas fa-angle-left"></i> -->
               </p>
             </a>
@@ -53,7 +53,7 @@
               <!-- <i class="nav-icon fas fa-th"></i> -->
               <i class="nav-icon fa fa-users"></i>
               <p>
-                Users
+              {{ __('Users') }}
                 <!-- <span class="right badge badge-danger">New</span> -->
               </p>
             </a>

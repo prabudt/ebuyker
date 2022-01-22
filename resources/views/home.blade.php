@@ -6,11 +6,11 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Dashboard</h1>
+            <h1 class="m-0">{{ __('Dashboard') }}</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">Dashboard</li>
+              <li class="breadcrumb-item active">{{ __('Dashboard') }}</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -28,12 +28,12 @@
               <div class="inner">
                 <h3>{{$countData['driver_count']}}</h3>
 
-                <p>Drivers/Owners</p>
+                <p>{{ __('Drivers/Owners') }}</p>
               </div>
               <div class="icon">
                 <i class="ion ion-bag"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{url('users')}}?userType=3" class="small-box-footer">{{ __('More info') }} <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -43,12 +43,12 @@
               <div class="inner">
                 <h3>{{$countData['transporter_count']}}</h3>
 
-                <p>Transporters</p>
+                <p>{{ __('Transporters') }}</p>
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{url('users')}}?userType=4" class="small-box-footer">{{ __('More info') }} <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -58,12 +58,12 @@
               <div class="inner">
                 <h3>{{$countData['customer_count']}}</h3>
 
-                <p>Customer</p>
+                <p>{{ __('Customer') }}</p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{url('users')}}?userType=2" class="small-box-footer">{{ __('More info') }} <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -73,12 +73,12 @@
               <div class="inner">
                 <h3>{{$countData['approval_count']}}</h3>
 
-                <p>Waiting for approval</p>
+                <p>{{ __('Waiting for approval') }}</p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{url('users')}}?status=0" class="small-box-footer">{{ __('More info') }} <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->

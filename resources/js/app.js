@@ -17,6 +17,7 @@ import 'admin-lte/plugins/datatables-buttons/js/buttons.html5.min.js';
 import 'admin-lte/plugins/datatables-buttons/js/buttons.print.min.js';
 import 'admin-lte/plugins/datatables-buttons/js/buttons.colVis.min.js';
 import 'admin-lte/plugins/select2/js/select2.full.min.js';
+import 'admin-lte/plugins/daterangepicker/daterangepicker.js';
 
 //Don't forgot to put code also same as below otherwise it will not working
 
@@ -34,4 +35,19 @@ $('.select2').select2()
 $('.select2bs4').select2({
     theme: 'bootstrap4'
 })
+
+$('#date_range').daterangepicker({
+  autoUpdateInput: false,
+  locale: {
+      cancelLabel: 'Clear'
+  }
+})
+
+$('input[id="date_range"]').on('apply.daterangepicker', function(ev, picker) {
+  $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+});
+
+$('input[id="date_range"]').on('cancel.daterangepicker', function(ev, picker) {
+  $(this).val('');
+});
 // ..........similarly other scripts comes

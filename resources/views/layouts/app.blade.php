@@ -10,7 +10,10 @@
         a {
         color: #0d6efd;
         text-decoration: inherit !important;
-    }
+        }
+        .form-control {
+            background-color: #ffffff !important;
+        }
     </style>
 
     <title>{{ config('app.name', 'Laravel') }}</title>
