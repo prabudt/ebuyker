@@ -37,7 +37,7 @@ class UserController extends Controller
         }
 
         if(isset($request->mobile_no) && !empty($request->mobile_no)) {
-            $result->where('user_type_id', 'like', '%' .  $request->mobile_no . '%');
+            $result->where('mobile_no', 'like', '%' .  $request->mobile_no . '%');
         }
 
         if(isset($request->status) && $request->status != 'Any') {
@@ -54,5 +54,35 @@ class UserController extends Controller
         $result = $result->where('is_admin', 0)->get();
         $userType = UserType::where('active_flag', 1)->where('is_admin', 0)->get();
         return view('users.list', compact('result', 'userType', 'params'));
+    }
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        
+        $params = $this->getRequest($request);
+        $userList = User::find($params['user_id']); 
+
+        if(!empty($userList)) {
+            $paramdata['approval_date'] = Carbon::now();
+            $paramdata['approval_flag'] = $params['status'];
+            $userList->update($paramdata);
+            if($params['status'] == 1) {
+                $message = 'Approved successfully.';
+                return redirect()->back()->with('message-success', $message);
+            } else {
+                $message = 'Off-boarded successfully.';
+                return redirect()->back()->with('message-error', $message);
+            }
+            
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
     }
 }

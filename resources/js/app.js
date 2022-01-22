@@ -18,6 +18,7 @@ import 'admin-lte/plugins/datatables-buttons/js/buttons.print.min.js';
 import 'admin-lte/plugins/datatables-buttons/js/buttons.colVis.min.js';
 import 'admin-lte/plugins/select2/js/select2.full.min.js';
 import 'admin-lte/plugins/daterangepicker/daterangepicker.js';
+import 'admin-lte/plugins/toastr/toastr.min.js';
 
 //Don't forgot to put code also same as below otherwise it will not working
 

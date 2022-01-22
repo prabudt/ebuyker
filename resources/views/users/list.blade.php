@@ -6,7 +6,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Users</h1>
+            <h1 class="m-0">{{ __('Users') }}</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -18,7 +18,21 @@
       </div><!-- /.container-fluid -->
     </div>
 
+    @if(session()->has('message-success'))
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-check"></i>{{ session()->get('message-success') }}</h5>
+    </div>
+    @endif
 
+    @if(session()->has('message-error'))
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-ban"></i> {{ session()->get('message-error') }}</h5>
+        
+    </div>
+    @endif
+    
  <!-- Main content -->
  <div class="content">
       <div class="container-fluid">
@@ -119,7 +133,52 @@
                                     @endif
                                 </td>
                                 <td>{{date('d-m-Y H:m:s', strtotime(@$data->created_at))}}</td>
-                                <td>-</td>
+                                <td>
+                                    @if($data->approval_flag == 0)
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default{{@$data->id}}">
+                                        Action
+                                        </button>
+
+                                         <!-- Model Start -->
+                                                <div class="modal fade" id="modal-default{{@$data->id}}">
+                                                    <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h4 class="modal-title">Approve/Off-boarded</h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                        <p>Are you sure want to Approve/Off-boarded? </p>
+                                                        </div>
+                                                        <div class="modal-footer ">
+                                                        <form action="{{url('users')}}" method="post">
+                                                            @csrf
+                                                            <input type="hidden" name='status' value='1'>
+                                                            <input type="hidden" name='user_id' value='{{@$data->id}}'>
+                                                            <button type="submit" class="btn btn-primary">Approve</button>
+                                                        </form>
+
+                                                        <form action="{{url('users')}}" method="post">
+                                                            @csrf
+                                                            <input type="hidden" name='status' value='2'>
+                                                            <input type="hidden" name='user_id' value='{{@$data->id}}'>
+                                                            <button type="submit" class="btn btn-danger">Off-boarded</button>
+                                                        </form>
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.modal-content -->
+                                                    </div>
+                                                    <!-- /.modal-dialog -->
+                                                </div>
+                                                <!-- Model Start end-->
+                                                
+                                    @else
+                                        -
+                                    @endif
+                                    </td>
+                               
                             </tr>
                             @endforeach
                         @else

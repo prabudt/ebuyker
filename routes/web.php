@@ -21,4 +21,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 // Route::group(['prefix'=>'users'],function() {
     Route::resource('users', App\Http\Controllers\UserController::class);
+    Route::get('drivers-owners', [App\Http\Controllers\DriversController::class, 'index']);
+    Route::get('transporter', [App\Http\Controllers\TransporterController::class, 'index']);
+    Route::get('customer', [App\Http\Controllers\CustomerController::class, 'index']);
 // });

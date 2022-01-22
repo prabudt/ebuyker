@@ -58,6 +58,40 @@
               </p>
             </a>
           </li>
+
+          <li class="nav-item">
+            <a href="{{url('drivers-owners')}}" class="nav-link {{ request()->is('drivers-owners') ? 'active' : ''}}">
+              <!-- <i class="nav-icon fas fa-th"></i> -->
+              <i class="nav-icon fa fa-truck"></i>
+              <p>
+              {{ __('Drivers/Owners') }}
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{{url('transporter')}}" class="nav-link {{ request()->is('transporter') ? 'active' : ''}}">
+              <!-- <i class="nav-icon fas fa-th"></i> -->
+              <i class="nav-icon fa fa-truck-moving"></i>
+              <p>
+              {{ __('Transporter') }}
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{{url('customer')}}" class="nav-link {{ request()->is('customer') ? 'active' : ''}}">
+              <!-- <i class="nav-icon fas fa-th"></i> -->
+              <i class="nav-icon fas fa-users-cog"></i>
+              <p>
+              {{ __('Customer') }}
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
