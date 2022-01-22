@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -11,9 +12,13 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
+
+    private $users;
+
+    public function __construct(User $users)
     {
         $this->middleware('auth');
+        $this->users = $users;
     }
 
     /**
@@ -23,6 +28,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $result = $this->users->getData();
+        $countData = [
+            "customer_count" => $result->where('user_type_id', 2)->where('approval_flag', 1)->count(),
+            "driver_count" => $result->where('user_type_id', 3)->where('approval_flag', 1)->count(),
+            "transporter_count" => $result->where('user_type_id', 4)->where('approval_flag', 1)->count(),
+            "approval_count" => $result->where('is_admin', 0)->where('approval_flag', 0)->count()
+        ];
+        return view('home', compact('result', 'countData'));
     }
 }

@@ -80,4 +80,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne('App\\Models\\Truck', 'user_id');
     }
+
+    public function getData() {
+        return $this->where('is_admin', 0)->get();
+    }
 }
