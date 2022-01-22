@@ -10,6 +10,14 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <style>
+        a {
+        color: #0d6efd;
+        text-decoration: inherit !important;
+    }
+    </style>
+    
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
