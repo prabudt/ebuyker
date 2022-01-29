@@ -14,6 +14,19 @@
         .form-control {
             background-color: #ffffff !important;
         }
+
+        .pageLoader{
+            background: url({{url('img/loader.gif')}}) no-repeat center center;
+            background-size: 100px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 9999999;
+            background-color: #ffffff8c;
+
+        }
     </style>
 
     <title>{{ config('app.name', 'Laravel') }}</title>
@@ -24,6 +37,7 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
 <body class="hold-transition sidebar-mini">
+    <div  class="pageLoader" id="pageLoader"></div>
     <div class="wrapper">
         <!-- Navbar -->
         @include('layouts.navbar')
@@ -48,6 +62,5 @@
         @include('layouts.footer')
     </div>
 
-    
 </body>
 </html>

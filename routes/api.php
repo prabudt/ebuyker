@@ -50,6 +50,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('vehicles', [VehiclesController::class, 'index']);
     Route::group(['prefix'=>'customer'],function() {
         Route::resource('load', LoadController::class);
+        Route::get('location-based-load', [LoadController::class, 'locationBasedLoad']);
     });
     Route::group(['prefix'=>'driver-transporter'],function() {
         Route::resource('truck', TruckController::class);

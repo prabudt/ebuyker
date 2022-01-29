@@ -60,7 +60,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="{{url('drivers-owners')}}" class="nav-link {{ request()->is('drivers-owners') ? 'active' : ''}}">
+            <a href="{{url('drivers-owners')}}" class="nav-link {{ request()->is('drivers-owners*') ? 'active' : ''}}">
               <!-- <i class="nav-icon fas fa-th"></i> -->
               <i class="nav-icon fa fa-truck"></i>
               <p>
@@ -71,7 +71,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="{{url('transporter')}}" class="nav-link {{ request()->is('transporter') ? 'active' : ''}}">
+            <a href="{{url('transporter')}}" class="nav-link {{ request()->is('transporter*') ? 'active' : ''}}">
               <!-- <i class="nav-icon fas fa-th"></i> -->
               <i class="nav-icon fa fa-truck-moving"></i>
               <p>
@@ -82,7 +82,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="{{url('customer')}}" class="nav-link {{ request()->is('customer') ? 'active' : ''}}">
+            <a href="{{url('customer')}}" class="nav-link {{ request()->is('customer*') ? 'active' : ''}}">
               <!-- <i class="nav-icon fas fa-th"></i> -->
               <i class="nav-icon fas fa-users-cog"></i>
               <p>

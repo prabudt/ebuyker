@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use App\Models\UserType;
+use App\Models\Truck;
 
 
 use Carbon\Carbon;
@@ -54,24 +55,38 @@ class DriversController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function show(Request $request, $id)
     {
         
         $params = $this->getRequest($request);
-        $userList = User::find($params['user_id']); 
-
+        $userList = User::find($id); 
         if(!empty($userList)) {
-            $paramdata['approval_date'] = Carbon::now();
-            $paramdata['approval_flag'] = $params['status'];
-            $userList->update($paramdata);
-            if($params['status'] == 1) {
-                $message = 'Approved successfully.';
-                return redirect()->back()->with('message-success', $message);
-            } else {
-                $message = 'Off-boarded successfully.';
-                return redirect()->back()->with('message-error', $message);
-            }
-            
+            return view('drivers.show', compact('userList', 'params'));
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
+    }
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function vechileData(Request $request, $id)
+    {
+        
+        $params = $this->getRequest($request);
+        $data = Truck::with(['vehicleType','vehicles', 'user', 'truckFileFata'])
+                    ->where('active_flag', '1')
+                    ->where('user_id', $id)
+                    ->first(); 
+
+        $truckFileData = !empty($data->truckFileFata) ? $data->truckFileFata->pluck('file', 'truck_type') : [];
+                    dump($truckFileData, $data->toArray());
+        if(!empty($data)) {
+            return view('drivers.vechicle-view', compact('data', 'params', 'truckFileData'));
         } else {
             return redirect()->back()->with('message-error', 'Oops! Failed.');
         }

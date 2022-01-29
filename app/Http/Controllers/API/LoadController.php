@@ -9,6 +9,7 @@ use Carbon\Carbon;
 
 use JWTAuth;
 use App\Models\Loads;
+use App\Models\Truck;
 
 class LoadController extends Controller
 {
@@ -173,5 +174,39 @@ class LoadController extends Controller
             $message = 'Load already expired.';  
             return $this->validationError($message);
         }
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function locationBasedLoad(Request $request)
+    {
+        $params = $this->getRequest($request);
+        $currentDate = Carbon::now()->format('Y-m-d');
+
+        $truckLocation = Truck::where('active_flag', 1)->where('user_id', JWTAuth::user()->id)->pluck('location')->toArray();
+        $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking.users.truckData.truckFileFata'])
+                    ->where('active_flag', '1');
+        if(isset($params['is_expiry']) && $params['is_expiry'] == 1 ) {
+            $data->whereDate('pickup_date','<=',$currentDate);
+        } elseif(isset($params['is_expiry']) && $params['is_expiry'] == 0 ) {
+            $data->whereDate('pickup_date','>=', $currentDate);
+        } 
+
+        $data->where(function ($query) use($truckLocation) {
+            for ($i = 0; $i < count($truckLocation); $i++){
+               $query->orwhere('load_location', 'like',  '%' . $truckLocation[$i] .'%');
+            }      
+        });
+
+        $data->doesntHave('booking')->orWhereHas('booking', function($q){
+            $q->where('user_id', JWTAuth::user()->id);
+        });
+
+
+        $data = $data->get();
+        return $this->sendSuccess($data);
     }
 }

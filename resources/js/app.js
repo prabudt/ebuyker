@@ -51,4 +51,15 @@ $('input[id="date_range"]').on('apply.daterangepicker', function(ev, picker) {
 $('input[id="date_range"]').on('cancel.daterangepicker', function(ev, picker) {
   $(this).val('');
 });
+
+$(window).on('beforeunload', function(){
+    
+  $('#pageLoader').show();
+
+});
+
+$(function () {
+
+  $('#pageLoader').hide();
+})
 // ..........similarly other scripts comes
