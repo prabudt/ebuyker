@@ -90,7 +90,7 @@ class Loads extends Model
     }
 
     public function getIsExpiryAttribute() {
-        $pickupdate = Carbon::parse($this->pickup_date)->format('Y-m-d');
+        $pickupdate = Carbon::parse($this->pickup_date)->addDay()->format('Y-m-d');
         $currentDate = Carbon::now()->format('Y-m-d');
         return ($currentDate <= $pickupdate) ? 0 : 1;
     }
