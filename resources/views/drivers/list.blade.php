@@ -119,7 +119,7 @@
                                         <div class="dropdown-menu" role="menu" style="">
                                         <a class="dropdown-item" href="{{url('drivers-owners/'.@$data->id)}}">Profile Data</a>
                                         <a class="dropdown-item" href="{{url('drivers-owners/vechile/'.@$data->id)}}">Vehicle Data</a>
-                                        <a class="dropdown-item" href="#">Personal Load History</a>                                  
+                                        <a class="dropdown-item" href="{{url('drivers-owners/load-history/'.@$data->id)}}">Personal Load History</a>                                  
                                     </div>
                                 </td>
                                

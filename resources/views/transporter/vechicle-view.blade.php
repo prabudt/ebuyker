@@ -6,13 +6,14 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">{{ __('Drivers/Owners Vehicle Data') }}</h1>
+            <h1 class="m-0">{{ __('Transporter Vehicle Data') }}</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{url('/')}}">{{ __('Dashboard') }}</a></li>
-              <li class="breadcrumb-item"><a href="{{url('/drivers-owners')}}">{{ __('Drivers/Owners') }}</a></li>
-              <li class="breadcrumb-item active">{{ __('Drivers/Owners Vehicle Data') }}</li>
+              <li class="breadcrumb-item"><a href="{{url('/transporter')}}">{{ __('Transporter') }}</a></li>
+              <li class="breadcrumb-item"><a href="{{url('/transporter/vechile/'.$data->user_id)}}">{{ __('Transporter Vehicle List') }}</a></li>
+              <li class="breadcrumb-item active">{{ __('Transporter Vehicle Data') }}</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -24,7 +25,7 @@
       <div class="container-fluid">
       <div class="card">
               <div class="card-header">
-                <h4>{{ __('Drivers/Owners Vehicle Data') }}</h4>
+                <h4>{{ __('Transporter Vehicle Data') }}</h4>
               </div>
               <!-- /.card-header -->
               <div class="card-body">

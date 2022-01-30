@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use App\Models\UserType;
-
+use App\Models\Booking;
+use App\Models\Truck;
 
 use Carbon\Carbon;
 
@@ -72,6 +73,111 @@ class TransporterController extends Controller
                 return redirect()->back()->with('message-error', $message);
             }
             
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
+    {
+        $params = $this->getRequest($request);
+        $userList = User::find($id); 
+        if(!empty($userList)) {
+            return view('transporter.show', compact('userList', 'params'));
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
+    }
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function vechileData(Request $request, $id)
+    {
+        
+        $params = $this->getRequest($request);
+        $params['id'] = $id;
+        $result = Truck::with(['vehicleType', 'vehicles', 'user', 'truckFileFata'])
+                    ->where('active_flag', '1')
+                    ->where('user_id', $id); 
+
+        if(isset($request->date_range) && !empty($request->date_range)) {
+            $fromTODate = explode(' - ', $request->date_range);
+            $fromDate = isset($fromTODate[0]) ? Carbon::parse($fromTODate[0])->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+            $toDate = isset($fromTODate[1]) ?  Carbon::parse($fromTODate[1])->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+            $result->whereBetween('created_at', [$fromDate, $toDate]);
+        }
+
+        $result = $result->get(); 
+        if(!empty($result)) {
+            return view('transporter.vechicle-list', compact('result', 'params'));
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
+    }
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function vechileView(Request $request, $id)
+    {
+        
+        $params = $this->getRequest($request);
+        $params['id'] = $id;
+        $data = Truck::with(['vehicleType', 'vehicles', 'user', 'truckFileFata'])
+                    ->where('active_flag', '1')
+                    ->find($id); 
+
+        $truckFileData = !empty($data->truckFileFata) ? $data->truckFileFata->pluck('file', 'truck_type') : [];
+        if(!empty($data)) {
+            return view('transporter.vechicle-view', compact('data', 'params', 'truckFileData'));
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function loadHistory(Request $request, $id)
+    {
+        
+        $params = $this->getRequest($request);
+        $params['id'] = $id;
+        $result = Booking::with(['loads.vehicles', 'loads.vehicleType', 'users'])
+                    ->where('approval_flag', '1')
+                    ->where('user_id', $id);
+
+        if(isset($request->date_range) && !empty($request->date_range)) {
+            $fromTODate = explode(' - ', $request->date_range);
+            $fromDate = isset($fromTODate[0]) ? Carbon::parse($fromTODate[0])->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+            $toDate = isset($fromTODate[1]) ?  Carbon::parse($fromTODate[1])->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+            $result->whereBetween('created_at', [$fromDate, $toDate]);
+        }
+
+        $result = $result->get(); 
+            
+        if(!empty($result)) {
+            return view('transporter.load-history', compact('result', 'params'));
         } else {
             return redirect()->back()->with('message-error', 'Oops! Failed.');
         }

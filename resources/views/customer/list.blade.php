@@ -117,9 +117,8 @@
                                           <span class="sr-only">Toggle Dropdown</span>
                                           </button>
                                           <div class="dropdown-menu" role="menu" style="">
-                                          <a class="dropdown-item" href="#">Profile Data</a>
-                                          <a class="dropdown-item" href="#">Vechilce Data</a>
-                                          <a class="dropdown-item" href="#">Personal Load History</a>                                  
+                                          <a class="dropdown-item" href="{{url('customer/'.@$data->id)}}">Profile Data</a>
+                                          <a class="dropdown-item" href="{{url('customer/load-history/'.@$data->id)}}">Personal Load History</a>                            
                                       </div>
                                 </td>
                                

@@ -92,6 +92,17 @@
             </a>
           </li>
 
+          <li class="nav-item">
+            <a href="{{url('load-history')}}" class="nav-link {{ request()->is('load-history*') ? 'active' : ''}}">
+              <!-- <i class="nav-icon fas fa-th"></i> -->
+              <i class="nav-icon fas fa-road"></i>
+              <p>
+              {{ __('Load History') }}
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

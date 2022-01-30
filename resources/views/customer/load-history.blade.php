@@ -6,12 +6,13 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">{{ __('Transporter') }}</h1>
+            <h1 class="m-0">{{ __('Customer Load History') }}</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{url('/')}}">{{ __('Dashboard') }}</a></li>
-              <li class="breadcrumb-item active">{{ __('Transporter') }}</li>
+              <li class="breadcrumb-item"><a href="{{url('/customer')}}">{{ __('Customer') }}</a></li>
+              <li class="breadcrumb-item active">{{ __('Customer Load History') }}</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -38,21 +39,14 @@
       <div class="container-fluid">
       <div class="card">
               <div class="card-header">
-                <h4>{{ __('Transporter Filters') }}</h4>
-                <form action="{{url('transporter')}}" method="get">
+                <h4>{{ __('Customer Load History') }}</h4>
+                <form action="{{url('customer/load-history/'.$params['id'])}}" method="get">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
-
                             <div class="col-3">
                                 <div class="form-group">
-                                    <label>Mobile Number</label>
-                                    <input type="text" class="form-control" placeholder="Mobile Number" name="mobile_no" value="{{(isset($params['mobile_no'])) ? $params['mobile_no'] : '' }}" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <label>Date</label>
+                                    <label>Booking Date</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -81,52 +75,44 @@
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
-                    <th>{{ __('Name') }}</th>
-                    <th>{{ __('Mobile No') }}</th>
-                    <th>{{ __('Email') }}</th>
-                    <th>{{ __('User Type') }}</th>
-                    <th>{{ __('Address') }}</th>
+                    <th>{{ __('Booking Users') }}</th>
+                    <th>{{ __('Vehicle Type') }}</th>
+                    <th>{{ __('Vehicle') }}</th>
+                    <th>{{ __('Location(From/To)') }}</th>
+                    <th>{{ __('Pickup Date') }}</th>
+                    <th>{{ __('Material Type') }}</th>
                     <th>{{ __('Status') }}</th>
-                    <th>{{ __('Created Date') }}</th>
-                    <th>{{ __('Action') }}</th>
+                    <th>{{ __('Amount') }}</th>
+                    <th>{{ __('Booking Date') }}</th>
                   </tr>
                   </thead>
                   <tbody>
                         @if($result->count() > 0)
                             @foreach($result as $key => $data)
                             <tr>
-                                <td>{{@$data->name}}</td>
-                                <td>{{@$data->mobile_no}}</td>
-                                <td>{{@$data->email}}</td>
-                                <td>{{@$data->userType->name}}</td>
-                                <td>{{@$data->address ? $data->address : '-' }}</td>
+                                <td>{{@$data->users->name}}</td>
+                                <td>{{@$data->loads->vehicles->name}}</td>
+                                <td>{{@$data->loads->vehicleType->name}}</td>
+                                <td>{{@$data->loads->load_location}} / {{@$data->loads->unload_location}}</td>
+                                <td>{{date('d-m-Y H:m:s', strtotime(@$data->loads->pickup_date))}}</td>
+                                <td>{{@$data->loads->material_type ? $data->loads->material_type : '-' }}</td>
                                 <td>
-                                    @if($data->approval_flag == 0)
+                                    @if(@$data->loads->approval_flag == 0)
                                         {{ __('Unapproved') }}
-                                    @elseif($data->approval_flag == 2)
+                                    @elseif(@$data->loads->approval_flag == 2)
                                      {{ __('Off-boarded') }}
                                     @else
                                     {{ __('Approved') }}
                                     @endif
                                 </td>
+                                <td>{{@$data->loads->amount}}</td>
                                 <td>{{date('d-m-Y H:m:s', strtotime(@$data->created_at))}}</td>
-                                <td>
-                                  <div class="btn-group">
-                                          <button type="button" class="btn btn-info">Action</button>
-                                          <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-                                          <span class="sr-only">Toggle Dropdown</span>
-                                          </button>
-                                          <div class="dropdown-menu" role="menu" style="">
-                                          <a class="dropdown-item" href="{{url('transporter/'.@$data->id)}}">Profile Data</a>
-                                          <a class="dropdown-item" href="{{url('transporter/vechile/'.@$data->id)}}">Vehicle Data</a>
-                                          <a class="dropdown-item" href="{{url('transporter/load-history/'.@$data->id)}}">Personal Load History</a>                                 
-                                      </div>
-                                </td>
                                
                             </tr>
                             @endforeach
                         @else
                         <tr>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

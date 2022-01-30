@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use App\Models\UserType;
+use App\Models\Booking;
 
 
 use Carbon\Carbon;
@@ -72,6 +73,58 @@ class CustomerController extends Controller
                 return redirect()->back()->with('message-error', $message);
             }
             
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
+    }
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
+    {
+        $params = $this->getRequest($request);
+        $userList = User::find($id); 
+        if(!empty($userList)) {
+            return view('customer.show', compact('userList', 'params'));
+        } else {
+            return redirect()->back()->with('message-error', 'Oops! Failed.');
+        }
+        
+    }
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function loadHistory(Request $request, $id)
+    {
+        
+        $params = $this->getRequest($request);
+        $params['id'] = $id;
+        $result = Booking::with(['loads.vehicles', 'loads.vehicleType', 'users'])
+                    ->whereHas('loads', function($q) use($id) {
+                        $q->where('user_id', $id);
+                    })
+                    ->where('approval_flag', '1');
+
+        if(isset($request->date_range) && !empty($request->date_range)) {
+            $fromTODate = explode(' - ', $request->date_range);
+            $fromDate = isset($fromTODate[0]) ? Carbon::parse($fromTODate[0])->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+            $toDate = isset($fromTODate[1]) ?  Carbon::parse($fromTODate[1])->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+            $result->whereBetween('created_at', [$fromDate, $toDate]);
+        }
+
+        $result = $result->get(); 
+            
+        if(!empty($result)) {
+            return view('customer.load-history', compact('result', 'params'));
         } else {
             return redirect()->back()->with('message-error', 'Oops! Failed.');
         }
