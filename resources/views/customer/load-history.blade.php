@@ -91,8 +91,8 @@
                             @foreach($result as $key => $data)
                             <tr>
                                 <td>{{@$data->users->name}}</td>
-                                <td>{{@$data->loads->vehicles->name}}</td>
                                 <td>{{@$data->loads->vehicleType->name}}</td>
+                                <td>{{@$data->loads->vehicles->name}}</td>
                                 <td>{{@$data->loads->load_location}} / {{@$data->loads->unload_location}}</td>
                                 <td>{{date('d-m-Y H:m:s', strtotime(@$data->loads->pickup_date))}}</td>
                                 <td>{{@$data->loads->material_type ? $data->loads->material_type : '-' }}</td>
