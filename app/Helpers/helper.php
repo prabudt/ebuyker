@@ -45,3 +45,52 @@ if (! function_exists('fileUploadStorage')) {
     }
     
 }
+
+if (! function_exists('pushToMobile')) {
+    function pushToMobile($data, $title, $chatBody)
+    {
+        try {
+            $url = 'https://fcm.googleapis.com/fcm/send';
+            $serverKey = 'AAAAKSFP90w:APA91bGk8iioSTC6XGjBO8leiqwQ3BHACxsJoLg5eas_29vQQebnyLIWUTjgFcg3evf5Xpl8IhU8LU9tuVojScoSGIyXpj_v2AhIZTd-hPCNzPgRCJro2NvKhNVMVYNbOD_aDSxjB3jX';
+
+            $data = [
+                "to" => $data->push_token,
+                "notification" => [
+                    "title" => $title,
+                    "body" => $chatBody,  
+                ]
+            ];
+            $encodedData = json_encode($data);
+        
+            $headers = [
+                'Authorization:key=' . $serverKey,
+                'Content-Type: application/json',
+            ];
+
+            $ch = curl_init();
+        
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+            // Disabling SSL Certificate support temporarly
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);        
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
+            // Execute post
+            $result = curl_exec($ch);
+            if ($result === FALSE) {
+                die('Curl failed: ' . curl_error($ch));
+            }        
+            // Close connection
+            curl_close($ch);
+        } catch (\Exception $ex) {
+            if (isset($ex->errorInfo[2])) {
+                $message = $ex->errorInfo[2];
+            } else {
+                $message = $ex->getMessage();
+            }
+        }
+    }
+}

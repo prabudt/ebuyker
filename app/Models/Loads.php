@@ -96,7 +96,7 @@ class Loads extends Model
     }
     public function getBookingStatusAttribute() {
         $bookingData =Booking::where('load_id', $this->id)->first();
-        return (!empty($bookingData)) ? 1 : 0;
+        return (!empty($bookingData)) ? ($bookingData->approval_flag == 1) ? 1: 2 : 0;
     }
 
 }

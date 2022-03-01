@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use JWTAuth;
 use App\Models\User;
+use App\Models\UserDevices;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Mail;
 use Auth;
+use Carbon\Carbon;
 
 
 class ApiController extends Controller
@@ -117,6 +119,9 @@ class ApiController extends Controller
 
 		//Request is validated, do logout        
         try {
+            if(config('constants.is_store_user_devices') == true) {
+                UserDevices::where('user_id', JWTAuth::user()->id)->update(['active_flag'=>0]);
+            }
             $logout = JWTAuth::invalidate($request->token);
             $message = 'User has been logged out';
             return $this->sendSuccess($message, $message);   
@@ -157,6 +162,21 @@ class ApiController extends Controller
 
                 if(!empty($users->otp) && $params['otp'] == $users->otp) {
                     $token = $this->generateToken($users);
+                    if(config('constants.is_store_user_devices') == true) {
+                        $exitUserDevicesData = UserDevices::where('user_id', $users->id)->where('active_flag',1)->first();
+                        if(empty($exitUserDevicesData)) {
+                            $userDevicesData['user_id'] = $users->id;
+                            $userDevicesData['device_id'] = $params['device_id'];
+                            $userDevicesData['push_token'] = $params['push_token'];
+                            $userDevicesData['model_name'] = $params['model_name'];
+                            $userDevicesData['model_version'] = $params['model_version'];
+                            $userDevicesData['ip_address'] = $request->ip();;
+                            $userDevicesData['platform'] = $params['platform'];
+                            $userDevicesData['created_at'] = Carbon::now()->format('Y-m-d H:m:s');
+                            $userDevicesData['updated_at'] = Carbon::now()->format('Y-m-d H:m:s');
+                            UserDevices::insert($userDevicesData);
+                        }
+                    }
                 } else {
                     $message = 'Your OTP is invalid';
                     return $this->validationError($message);

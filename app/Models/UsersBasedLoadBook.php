@@ -4,19 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
-class Booking extends Model
+class UsersBasedLoadBook extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'booking_load';
+    protected $table = 'users_based_load_book';
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -30,20 +29,16 @@ class Booking extends Model
      * @var string[]
      */
     protected $fillable = [
-        'load_id',
+        'booking_id ',
         'user_id',
-        'booking_amount',
         'approval_flag',
-        'booking_type'
+        'limit_count'
     ];
 
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:m:s',
         'updated_at' => 'datetime:Y-m-d H:m:s',
     ];
-
-    
-
 
     // Motters To Use Created To data Only
     public function getCreatedAtAttribute($date)
@@ -56,17 +51,12 @@ class Booking extends Model
         return convertUTCToLocal($date);
     }
 
-    public function getPickupDateAttribute($date)
-    {
-        return convertUTCToLocal($date);
+    public function BookChatData() {
+        return $this->hasMany('App\\Models\\UsersBasedLoadBookChat', 'users_based_load_book_id');
     }
 
-    public function loads() {
-        return $this->belongsTo('App\\Models\\Loads', 'load_id');
-    }
-
-    public function users() {
-        return $this->belongsTo('App\\Models\\User', 'user_id');
+    public function user() {
+        return $this->belongsTo('App\\Models\\user', 'user_id');
     }
 
 }

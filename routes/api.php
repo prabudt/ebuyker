@@ -7,6 +7,7 @@ use App\Http\Controllers\API\VehiclesController;
 use App\Http\Controllers\API\LoadController;
 use App\Http\Controllers\API\TruckController;
 use App\Http\Controllers\API\BookingController;
+use App\Http\Controllers\API\ChatController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -59,5 +60,9 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::any('file-store', [TruckController::class, 'fileStore']);
     Route::group(['prefix'=>'load'],function() {
         Route::resource('booking', BookingController::class);
+    });
+
+    Route::group(['prefix'=>'booking'],function() {
+        Route::resource('chat', ChatController::class);
     });
 });

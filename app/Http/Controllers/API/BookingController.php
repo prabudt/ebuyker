@@ -9,6 +9,8 @@ use Carbon\Carbon;
 
 use JWTAuth;
 use App\Models\Booking;
+use App\Models\UsersBasedLoadBook;
+use App\Models\UsersBasedLoadBookChat;
 use App\Models\Loads;
 
 class BookingController extends Controller
@@ -23,7 +25,8 @@ class BookingController extends Controller
         $params = $this->getRequest($request);
 
         $data = Booking::with(['loads.loadCreatedBy','loads.vehicleType', 'loads.vehicles', 'users'])
-                ->where('user_id','>=', JWTAuth::user()->id);
+                ->where('user_id','>=', JWTAuth::user()->id)
+                ->where('approval_flag', '1');
                 
         if(isset($params['from_date']) && isset($params['to_date'])) {
             $fromDate = Carbon::parse($params['from_date'])->format('Y-m-d');
@@ -58,6 +61,7 @@ class BookingController extends Controller
         
         $params = $this->getRequest($request);
         $validator = Validator::make($params, [
+            'booking_type' => 'required',
             'load_id' => 'required|numeric|unique:booking_load,load_id,null,null'
         ]);
 
@@ -70,7 +74,18 @@ class BookingController extends Controller
         if(!empty($loadList)) {
             $params['user_id'] = JWTAuth::user()->id;
             $params['booking_amount'] = $loadList->amount;
+            if($params['booking_type'] == 1) {
+                $params['approval_flag'] = 0;
+            }
             $response = Booking::create($params);
+            if($params['booking_type'] == 1 && !empty($response)) {
+                $userBasedBook['user_id'] = JWTAuth::user()->id;
+                $userBasedBook['booking_id'] = $response->id;
+                $userBasedBook['limit_count'] = config('constants.chat_limit');
+                $userBasedBook['created_at'] = Carbon::now()->format('Y-m-d H:m:s');
+                $userBasedBook['updated_at'] = Carbon::now()->format('Y-m-d H:m:s');
+                $userBasedBookResponse = UsersBasedLoadBook::insert($userBasedBook);
+            }
             $message = 'Booking successfully.';
             return $this->sendSuccess($response, $message);
     
