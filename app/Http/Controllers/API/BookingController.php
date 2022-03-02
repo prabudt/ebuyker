@@ -81,6 +81,9 @@ class BookingController extends Controller
             $bookList = Booking::where('load_id', $params['load_id'])->first(); 
             if(!empty($bookList)) {
                 $response = $bookList;
+                if($params['booking_type'] == 0) {
+                    $response->update(['approval_flag'=>0,'user_id'=>JWTAuth::user()->id]);
+                }
             } else {
                 $response = Booking::create($params);
             }
