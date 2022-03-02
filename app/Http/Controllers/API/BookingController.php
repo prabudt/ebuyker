@@ -82,7 +82,7 @@ class BookingController extends Controller
             if(!empty($bookList)) {
                 $response = $bookList;
                 if($params['booking_type'] == 0) {
-                    $response->update(['approval_flag'=>0,'user_id'=>JWTAuth::user()->id]);
+                    $response->update(['approval_flag'=>1,'user_id'=>JWTAuth::user()->id]);
                 }
             } else {
                 $response = Booking::create($params);
