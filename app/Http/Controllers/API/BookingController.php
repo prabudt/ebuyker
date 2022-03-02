@@ -71,13 +71,20 @@ class BookingController extends Controller
             return $this->validationError($errors);
         }
         $loadList = Loads::find($params['load_id']); 
+        
         if(!empty($loadList)) {
             $params['user_id'] = JWTAuth::user()->id;
             $params['booking_amount'] = $loadList->amount;
             if($params['booking_type'] == 1) {
                 $params['approval_flag'] = 0;
             }
-            $response = Booking::create($params);
+            $bookList = Booking::where('load_id', $params['load_id'])->first(); 
+            if(!empty($bookList)) {
+                $response = $bookList;
+            } else {
+                $response = Booking::create($params);
+            }
+            
             $message = 'Booking successfully.';
             if($params['booking_type'] == 1 && !empty($response)) {
                 $userBasedBook['user_id'] = JWTAuth::user()->id;
