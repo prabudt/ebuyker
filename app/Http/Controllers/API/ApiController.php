@@ -147,10 +147,23 @@ class ApiController extends Controller
     {
         $params = $this->getRequest($request);        
         //valid credential
-        $validator = Validator::make($params, [
-            'mobile_no' => 'required|digits:10',
-            'otp' => 'required|digits:6'
-        ]);
+        if(config('constants.is_store_user_devices') == true) {
+            $validator = Validator::make($params, [
+                'mobile_no' => 'required|digits:10',
+                'otp' => 'required|digits:6',
+                'device_id' => 'required',
+                'push_token' => 'required',
+                'model_name' => 'required',
+                'model_version' => 'required',
+                'platform' => 'required'
+            ]);
+        } else {
+            $validator = Validator::make($params, [
+                'mobile_no' => 'required|digits:10',
+                'otp' => 'required|digits:6'
+            ]);
+        }
+        
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
