@@ -78,6 +78,7 @@ class BookingController extends Controller
                 $params['approval_flag'] = 0;
             }
             $response = Booking::create($params);
+            $message = 'Booking successfully.';
             if($params['booking_type'] == 1 && !empty($response)) {
                 $userBasedBook['user_id'] = JWTAuth::user()->id;
                 $userBasedBook['booking_id'] = $response->id;
@@ -85,8 +86,9 @@ class BookingController extends Controller
                 $userBasedBook['created_at'] = Carbon::now()->format('Y-m-d H:m:s');
                 $userBasedBook['updated_at'] = Carbon::now()->format('Y-m-d H:m:s');
                 $userBasedBookResponse = UsersBasedLoadBook::insert($userBasedBook);
+                $message = 'Booking Negotiations going on.';
             }
-            $message = 'Booking successfully.';
+            
             return $this->sendSuccess($response, $message);
     
         } else {
