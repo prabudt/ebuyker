@@ -36,8 +36,8 @@ class LoadController extends Controller
         }
 
         if(isset($params['show_booking']) && $params['show_booking'] == 1) {
-            $data->doesntHave('booking')->orWhereHas('booking', function($q){
-                $q->where('user_id', JWTAuth::user()->id);
+            $data->whereHas('booking', function($q){
+                $q->where('user_id', JWTAuth::user()->id)->orWhere('approval_flag', 0);
             });
         }
 
@@ -201,10 +201,13 @@ class LoadController extends Controller
             }      
         });
 
-        $data->doesntHave('booking')->orWhereHas('booking', function($q){
+        /* $data->doesntHave('booking')->orWhereHas('booking', function($q){
             $q->where('user_id', JWTAuth::user()->id);
-        });
+        }); */
 
+        $data->whereHas('booking', function($q){
+            $q->where('user_id', JWTAuth::user()->id)->orWhere('approval_flag', 0);
+        });
 
         $data = $data->get();
         return $this->sendSuccess($data);

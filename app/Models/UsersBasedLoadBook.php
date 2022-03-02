@@ -59,4 +59,8 @@ class UsersBasedLoadBook extends Model
         return $this->belongsTo('App\\Models\\user', 'user_id');
     }
 
+    public function booking() {
+        return $this->belongsTo('App\\Models\\Booking', 'booking_id');
+    }
+
 }

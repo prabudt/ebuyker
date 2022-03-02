@@ -81,9 +81,10 @@ if (! function_exists('pushToMobile')) {
             // Execute post
             $result = curl_exec($ch);
             if ($result === FALSE) {
-                die('Curl failed: ' . curl_error($ch));
+                $message = ('Curl failed: ' . curl_error($ch));
             }        
             // Close connection
+            $message = "success";
             curl_close($ch);
         } catch (\Exception $ex) {
             if (isset($ex->errorInfo[2])) {
@@ -92,5 +93,7 @@ if (! function_exists('pushToMobile')) {
                 $message = $ex->getMessage();
             }
         }
+
+        return  $message;
     }
 }

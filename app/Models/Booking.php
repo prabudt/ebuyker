@@ -65,6 +65,10 @@ class Booking extends Model
         return $this->belongsTo('App\\Models\\Loads', 'load_id');
     }
 
+    public function bookingChat() {
+        return $this->hasOne('App\\Models\\UsersBasedLoadBook', 'booking_id');
+    }
+
     public function users() {
         return $this->belongsTo('App\\Models\\User', 'user_id');
     }

@@ -62,7 +62,7 @@ class BookingController extends Controller
         $params = $this->getRequest($request);
         $validator = Validator::make($params, [
             'booking_type' => 'required',
-            'load_id' => 'required|numeric|unique:booking_load,load_id,null,null'
+            'load_id' => 'required|numeric|unique:booking_load,load_id,null,null,approval_flag,1'
         ]);
 
         //Send failed response if request is not valid
