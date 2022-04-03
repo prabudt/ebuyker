@@ -85,6 +85,9 @@ class BookingController extends Controller
             } else {
                 $response = Booking::create($params);
             }
+            if($params['booking_type'] == 0) {
+                $loadList->update(['approval_flag'=>1]);
+            }
             $response->limit_count = config('constants.chat_limit');
             
             $message = 'Booking successfully.';
