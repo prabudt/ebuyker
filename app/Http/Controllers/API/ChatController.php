@@ -148,6 +148,11 @@ class ChatController extends Controller
             $result = Booking::with(['loads'])->where('approval_flag', 0)->find($params['booking_id']);
             $resultUpdate = ['approval_flag'=> 1, 'booking_amount' => $params['amount'], 'user_id' => JWTAuth::user()->id];
             $result->update($resultUpdate);
+
+            //Load Book
+            $resultLoad = Loads::where('approval_flag', 0)->find($result['load_id']);
+            $resultLoadUpdate = ['approval_flag'=> 1];
+            $resultLoad->update($resultLoadUpdate);
            
             $title = 'Ebuyker - Chat Amount Conversation';
             $chatBody = JWTAuth::user()->name.' was Approved for this amount:'.$params['amount'];
