@@ -52,7 +52,7 @@ class LoadController extends Controller
             if(count($data) > 0) {
                 foreach ($data as $key => $value) {
                     if(isset($value->booking) && !empty($value->booking)) {
-                        if(JWTAuth::user()->id == $value->booking->user_id) {
+                        if(JWTAuth::user()->id == $value->booking->user_id && $value->booking->approval_flag ==1) {
                             $result[$key] = $value;
                         }
                     } else {
@@ -225,7 +225,7 @@ class LoadController extends Controller
         if(count($data) > 0) {
             foreach ($data as $key => $value) {
                 if(isset($value->booking) && !empty($value->booking)) {
-                    if(JWTAuth::user()->id == $value->booking->user_id) {
+                    if(JWTAuth::user()->id == $value->booking->user_id  && $value->booking->approval_flag ==1) {
                         $result[$key] = $value;
                     }
                 } else {
