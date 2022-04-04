@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use JWTAuth;
 use App\Models\Loads;
 use App\Models\Truck;
+use App\Models\Booking;
 
 class LoadController extends Controller
 {
@@ -35,12 +36,6 @@ class LoadController extends Controller
             $data->where('unload_location','like', '%' .$params['to_location']. '%');
         }
 
-        if(isset($params['show_booking']) && $params['show_booking'] == 1) {
-            $data->whereHas('booking', function($q){
-                $q->where('user_id', JWTAuth::user()->id)->orWhere('approval_flag', 0);
-            });
-        }
-
         if(isset($params['is_customer_view'])) {
             $data->has('booking');
         }
@@ -50,9 +45,25 @@ class LoadController extends Controller
             $data->where('user_id', JWTAuth::user()->id);
         }
 
+        $data = $data->orderBy('id', 'desc')->get();
 
-        $data = $data->get();
-        return $this->sendSuccess($data);
+        $result = collect();
+        if(isset($params['show_booking']) && $params['show_booking'] == 1) {
+            if(count($data) > 0) {
+                foreach ($data as $key => $value) {
+                    if(isset($value->booking) && !empty($value->booking)) {
+                        if(JWTAuth::user()->id == $value->booking->user_id) {
+                            $result[$key] = $value;
+                        }
+                    } else {
+                        $result[$key] = $value;
+                    }                   
+                }
+            }
+        }
+        $result = $result->values();
+        $result->all();
+        return $this->sendSuccess($result);
     }
 
     /**
@@ -205,11 +216,25 @@ class LoadController extends Controller
             $q->where('user_id', JWTAuth::user()->id);
         }); */
 
-        $data->whereHas('booking', function($q){
-            $q->where('user_id', JWTAuth::user()->id)->orWhere('approval_flag', 0);
+        $data->orWhereHas('booking', function($q){
+            $q->where('user_id', JWTAuth::user()->id)->where('approval_flag', 0);
         });
-
-        $data = $data->get();
-        return $this->sendSuccess($data);
+        $data = $data->orderBy('id', 'desc')->get();
+        
+        $result = collect();
+        if(count($data) > 0) {
+            foreach ($data as $key => $value) {
+                if(isset($value->booking) && !empty($value->booking)) {
+                    if(JWTAuth::user()->id == $value->booking->user_id) {
+                        $result[$key] = $value;
+                    }
+                } else {
+                    $result[$key] = $value;
+                }                   
+            }
+        }
+        $result = $result->values();
+        $result->all();
+        return $this->sendSuccess($result);
     }
 }
