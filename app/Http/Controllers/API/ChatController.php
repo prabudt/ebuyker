@@ -180,11 +180,18 @@ class ChatController extends Controller
     {
         $result = Booking::with(['loads'])->where('approval_flag', 0)->find($id);
         if(!empty($result)) {
+            $userBasedBookChatCount = UsersBasedLoadBookChat::with(['userBasedChat' => function($q) use($id) {
+                $q->where('booking_id', $id)
+                    ->where('user_id', JWTAuth::user()->id);
+            }])->where('user_id', JWTAuth::user()->id)
+            ->count();
+            $chatCount['chat_count'] = $userBasedBookChatCount;
             $data = UsersBasedLoadBookChat::with(['user','userBasedChat'])->whereHas('userBasedChat', function($q) use($id) {
                 $q->where('booking_id', $id)
                     ->where('user_id', JWTAuth::user()->id)
                     ->orderBy('id', 'desc');
             })->orderBy('id', 'DESC')->get();
+            $data = array_merge($data, $chatCount);
             return $this->sendSuccess($data);
         } else {
             return $this->validationError('Oops! This Load already Booked.');
