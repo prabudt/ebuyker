@@ -180,12 +180,13 @@ class ChatController extends Controller
     {
         $result = Booking::with(['loads'])->where('approval_flag', 0)->find($id);
         if(!empty($result)) {
-            $userBasedBookChatCount = UsersBasedLoadBookChat::with(['userBasedChat' => function($q) use($id) {
+            $userBasedBookChatCount = UsersBasedLoadBookChat::with(['userBasedChat'])
+            ->whereHas('userBasedChat', function($q) use($id) {
                 $q->where('booking_id', $id)
                     ->where('user_id', JWTAuth::user()->id);
-            }])->where('user_id', JWTAuth::user()->id)
+            })->where('user_id', JWTAuth::user()->id)
             ->count();
-            
+
             $data = UsersBasedLoadBookChat::with(['user','userBasedChat'])->whereHas('userBasedChat', function($q) use($id) {
                 $q->where('booking_id', $id)
                     ->where('user_id', JWTAuth::user()->id)
