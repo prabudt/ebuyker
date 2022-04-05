@@ -185,13 +185,13 @@ class ChatController extends Controller
                     ->where('user_id', JWTAuth::user()->id);
             }])->where('user_id', JWTAuth::user()->id)
             ->count();
-            $chatCount['chat_count'] = $userBasedBookChatCount;
+            
             $data = UsersBasedLoadBookChat::with(['user','userBasedChat'])->whereHas('userBasedChat', function($q) use($id) {
                 $q->where('booking_id', $id)
                     ->where('user_id', JWTAuth::user()->id)
                     ->orderBy('id', 'desc');
             })->orderBy('id', 'DESC')->get();
-            return $this->sendSuccess($data, 'OK', 200, $chatCount);
+            return $this->sendSuccess($data, 'OK', 200, $userBasedBookChatCount);
         } else {
             return $this->validationError('Oops! This Load already Booked.');
         }
