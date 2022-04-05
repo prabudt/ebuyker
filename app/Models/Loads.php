@@ -54,7 +54,7 @@ class Loads extends Model
         'pickup_date' => 'datetime:Y-m-d H:m:s',
     ];
 
-    protected $appends = ['is_expiry', 'booking_status'];
+    protected $appends = ['is_expiry', 'booking_status', 'limit_count'];
 
 
     // Motters To Use Created To data Only
@@ -97,6 +97,10 @@ class Loads extends Model
     public function getBookingStatusAttribute() {
         $bookingData =Booking::where('load_id', $this->id)->first();
         return (!empty($bookingData)) ? ($bookingData->approval_flag == 1) ? 1: 2 : 0;
+    }
+
+    public function getLimitCountAttribute() {
+        return config('constants.chat_limit');
     }
 
 }
