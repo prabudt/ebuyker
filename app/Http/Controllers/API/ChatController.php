@@ -191,8 +191,7 @@ class ChatController extends Controller
                     ->where('user_id', JWTAuth::user()->id)
                     ->orderBy('id', 'desc');
             })->orderBy('id', 'DESC')->get();
-            $data = array_merge($data, $chatCount);
-            return $this->sendSuccess($data);
+            return $this->sendSuccess($data, 'OK', 200, $chatCount);
         } else {
             return $this->validationError('Oops! This Load already Booked.');
         }

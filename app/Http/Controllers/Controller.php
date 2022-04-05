@@ -49,10 +49,10 @@ class Controller extends BaseController
      * @param $response
      * @return JsonResponse
      */
-    protected function sendSuccess($response, $message = 'OK', $statusCode = 200)
+    protected function sendSuccess($response, $message = 'OK', $statusCode = 200, $count = 0)
     {
         return response()->json(
-            $this->frameResponse(false, 200,  $message, $this->sendResponse($response)),
+            $this->frameResponse(false, 200,  $message, $this->sendResponse($response),  $count),
             $statusCode);
     }
     /**
@@ -73,8 +73,19 @@ class Controller extends BaseController
      * @param array|object $data
      * @return array
      */
-    protected function frameResponse(bool $error, int $statusCode, string $statusMessage, $data): array
+    protected function frameResponse(bool $error, int $statusCode, string $statusMessage, $data, $count = 0): array
     {
+        
+       if($count != 0) {
+        return [
+            'error' => $error,
+            'statusCode' => $statusCode,
+            'statusMessage' => $statusMessage,
+            'data' => $data,
+            'responseTime' => time(),
+            'chat_count' => $count
+        ];
+       } else {
         return [
             'error' => $error,
             'statusCode' => $statusCode,
@@ -82,6 +93,8 @@ class Controller extends BaseController
             'data' => $data,
             'responseTime' => time()
         ];
+       }
+        
     }
 
     /**
