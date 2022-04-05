@@ -52,8 +52,8 @@ class LoadController extends Controller
             if(isset($params['show_booking']) && $params['show_booking'] == 1) { 
                 if(count($data) > 0) {
                     foreach ($data as $key => $value) {
-                        if(isset($value->booking) && !empty($value->booking) && JWTAuth::user()->user_type_id != 2) {
-                            if(JWTAuth::user()->id == $value->booking->user_id && $value->booking->approval_flag ==1) {
+                        if(isset($value->booking) && !empty($value->booking) && isset($value->booking->approval_flag) && $value->booking->approval_flag == 1 ) {
+                            if(JWTAuth::user()->id == $value->booking->user_id) {
                                 $result[$key] = $value;
                             }
                         } else {
@@ -226,19 +226,23 @@ class LoadController extends Controller
         $data = $data->orderBy('id', 'desc')->get();
         
         $result = collect();
-        if(count($data) > 0) {
-            foreach ($data as $key => $value) {
-                if(isset($value->booking) && !empty($value->booking) && JWTAuth::user()->user_type_id != 2) {
-                    if(JWTAuth::user()->id == $value->booking->user_id  && $value->booking->approval_flag ==1) {
+        if( JWTAuth::user()->user_type_id != 2) {
+            if(count($data) > 0) {
+                foreach ($data as $key => $value) {
+                    if(isset($value->booking) && !empty($value->booking) && isset($value->booking->approval_flag) && $value->booking->approval_flag ==1) {
+                        if(JWTAuth::user()->id == $value->booking->user_id ) {
+                            $result[$key] = $value;
+                        }
+                    } else {
                         $result[$key] = $value;
-                    }
-                } else {
-                    $result[$key] = $value;
-                }                   
+                    }                                
+                }
+                $result = $result->values();
+                $result->all();
             }
+        } else {
+            $result = $data;
         }
-        $result = $result->values();
-        $result->all();
         return $this->sendSuccess($result);
     }
 }
