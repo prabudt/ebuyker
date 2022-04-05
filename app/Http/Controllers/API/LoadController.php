@@ -48,26 +48,21 @@ class LoadController extends Controller
         $data = $data->orderBy('id', 'desc')->get();
 
         $result = collect();
-        if( JWTAuth::user()->user_type_id != 2) {
-            if(isset($params['show_booking']) && $params['show_booking'] == 1) {
-                if(count($data) > 0) {
-                    foreach ($data as $key => $value) {
-                        if(isset($value->booking) && !empty($value->booking) && JWTAuth::user()->user_type_id != 2) {
-                            if(JWTAuth::user()->id == $value->booking->user_id && $value->booking->approval_flag ==1) {
-                                $result[$key] = $value;
-                            }
-                        } else {
+        if(isset($params['show_booking']) && $params['show_booking'] == 1) {
+            if(count($data) > 0) {
+                foreach ($data as $key => $value) {
+                    if(isset($value->booking) && !empty($value->booking) && JWTAuth::user()->user_type_id != 2) {
+                        if(JWTAuth::user()->id == $value->booking->user_id && $value->booking->approval_flag ==1) {
                             $result[$key] = $value;
-                        }                   
-                    }
+                        }
+                    } else {
+                        $result[$key] = $value;
+                    }                   
                 }
             }
-            $result = $result->values();
-            $result->all();
-        } else {
-            $result = $data;
         }
-       
+        $result = $result->values();
+        $result->all();
         return $this->sendSuccess($result);
     }
 
@@ -227,24 +222,19 @@ class LoadController extends Controller
         $data = $data->orderBy('id', 'desc')->get();
         
         $result = collect();
-        if( JWTAuth::user()->user_type_id != 2) {
-            if(count($data) > 0) {
-                foreach ($data as $key => $value) {
-                    if(isset($value->booking) && !empty($value->booking)) {
-                        if(JWTAuth::user()->id == $value->booking->user_id  && $value->booking->approval_flag ==1) {
-                            $result[$key] = $value;
-                        }
-                    } else {
+        if(count($data) > 0) {
+            foreach ($data as $key => $value) {
+                if(isset($value->booking) && !empty($value->booking) && JWTAuth::user()->user_type_id != 2) {
+                    if(JWTAuth::user()->id == $value->booking->user_id  && $value->booking->approval_flag ==1) {
                         $result[$key] = $value;
-                    }                   
-                }
+                    }
+                } else {
+                    $result[$key] = $value;
+                }                   
             }
-            $result = $result->values();
-            $result->all();
-        } else {
-            $result = $data;
         }
-       
+        $result = $result->values();
+        $result->all();
         return $this->sendSuccess($result);
     }
 }
