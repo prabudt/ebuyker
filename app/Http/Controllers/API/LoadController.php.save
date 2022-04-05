@@ -47,7 +47,7 @@ class LoadController extends Controller
 
         $data = $data->orderBy('id', 'desc')->get();
 
-        $result = collect();
+         $result = collect();
         if( JWTAuth::user()->user_type_id != 2) {
             if(isset($params['show_booking']) && $params['show_booking'] == 1) { 
                 if(count($data) > 0) {
