@@ -25,7 +25,9 @@ class ChatController extends Controller
     {
         $params = $this->getRequest($request);
 
-        $data = UsersBasedLoadBook::with(['user','BookChatData'])->where('booking_id', $params['booking_id']);
+        $data = UsersBasedLoadBook::with(['user','BookChatData' => function ($query) {
+            $query->orderBy('id', 'desc');
+        }])->where('booking_id', $params['booking_id']);
                 
         if(isset($params['from_date']) && isset($params['to_date'])) {
             $fromDate = Carbon::parse($params['from_date'])->format('Y-m-d');
@@ -179,7 +181,9 @@ class ChatController extends Controller
         $result = Booking::with(['loads'])->where('approval_flag', 0)->find($id);
         if(!empty($result)) {
             $data = UsersBasedLoadBookChat::with(['user','userBasedChat'])->whereHas('userBasedChat', function($q) use($id) {
-                $q->where('booking_id', $id);
+                $q->where('booking_id', $id)
+                    ->where('user_id', JWTAuth::user()->id)
+                    ->orderBy('id', 'desc');
             })->orderBy('id', 'DESC')->get();
             return $this->sendSuccess($data);
         } else {
