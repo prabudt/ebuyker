@@ -128,7 +128,15 @@ class LoadController extends Controller
     public function show($id)
     {
         $data = Loads::with(['loadCreatedBy', 'vehicleType','vehicles', 'booking.users.truckData.truckFileFata'])->where('active_flag', '1')->find($id);
-        return $this->sendSuccess($data);
+
+        if( JWTAuth::user()->user_type_id != 2) {            
+            if(isset($data->booking) && !empty($data->booking)) {
+                if(JWTAuth::user()->id != $data->booking->user_id) {
+                    $data->booking = null;
+                }
+            }
+        }
+        return $this->sendSuccess($result);
     }
 
     /**
