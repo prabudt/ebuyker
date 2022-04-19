@@ -133,6 +133,7 @@ class LoadController extends Controller
             if(isset($data->booking) && !empty($data->booking)) {
                 if(JWTAuth::user()->id != $data->booking->user_id) {
                     $data->unsetRelation('booking');
+                    $data->setRelation('booking', null);
                 }
             }
         }
