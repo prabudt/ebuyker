@@ -136,7 +136,7 @@ class LoadController extends Controller
                 }
             }
         }
-        return $this->sendSuccess($result);
+        return $this->sendSuccess($data);
     }
 
     /**
