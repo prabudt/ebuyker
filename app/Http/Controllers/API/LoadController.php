@@ -132,6 +132,7 @@ class LoadController extends Controller
         if( JWTAuth::user()->user_type_id != 2) {            
             if(isset($data->booking) && !empty($data->booking)) {
                 if(JWTAuth::user()->id != $data->booking->user_id) {
+                    dd('test');
                     $data->booking = null;
                 }
             }
