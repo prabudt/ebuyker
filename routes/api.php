@@ -65,5 +65,6 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::group(['prefix'=>'booking'],function() {
         Route::resource('chat', ChatController::class);
         Route::post('chat-approve',  [ChatController::class, 'ApproveLoad']);
+        Route::post('customer-chat-approve',  [ChatController::class, 'CustomerApproveLoad']);
     });
 });

@@ -147,7 +147,53 @@ class ChatController extends Controller
         if(!empty($bookingList)) {
             $bookingList->update(['approval_flag'=> 1]);
 
-            $result = Booking::with(['loads'])->where('approval_flag', 0)->find($params['booking_id']);
+            /*$result = Booking::with(['loads'])->where('approval_flag', 0)->find($params['booking_id']);
+            $resultUpdate = ['approval_flag'=> 1, 'booking_amount' => $params['amount'], 'user_id' => JWTAuth::user()->id];
+            $result->update($resultUpdate);
+
+            //Load Book
+            $resultLoad = Loads::where('approval_flag', 0)->find($result['load_id']);
+            $resultLoadUpdate = ['approval_flag'=> 1];
+            $resultLoad->update($resultLoadUpdate); */
+           
+            $title = 'Ebuyker - Chat Amount Conversation';
+            $chatBody = JWTAuth::user()->name.' was Approved for this amount:'.$params['amount'];
+           
+            $userDeviceDetails = UserDevices::where('user_id', $result->loads->id)->where('active_flag',1)->first();
+            if(!empty($userDeviceDetails)) {
+                pushToMobile($userDeviceDetails, $title, $chatBody);
+            }
+
+            return $this->sendSuccess($result, 'Booked Successfully');
+        } else {
+            return $this->validationError('Oops! Load does not exist or Already Booked.');
+        }
+    }
+
+
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function CustomerApproveLoad(Request $request)
+    {
+        $params = $this->getRequest($request);
+        $validator = Validator::make($params, [
+            'user_booking_id' => 'required|numeric'
+        ]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails()) {
+            $errors = objectToSingle($validator->errors());
+            return $this->validationError($errors);
+        }
+        
+        $bookingList = UsersBasedLoadBook::where('id', $params['user_booking_id'])->where('approval_flag', 1)->first();
+        if(!empty($bookingList)) {
+
+            $result = Booking::with(['loads'])->where('approval_flag', 0)->find($bookingList->booking_id);
             $resultUpdate = ['approval_flag'=> 1, 'booking_amount' => $params['amount'], 'user_id' => JWTAuth::user()->id];
             $result->update($resultUpdate);
 
@@ -159,7 +205,7 @@ class ChatController extends Controller
             $title = 'Ebuyker - Chat Amount Conversation';
             $chatBody = JWTAuth::user()->name.' was Approved for this amount:'.$params['amount'];
            
-            $userDeviceDetails = UserDevices::where('user_id', $result->loads->id)->where('active_flag',1)->first();
+            $userDeviceDetails = UserDevices::where('user_id', $bookingList->user_id)->where('active_flag',1)->first();
             if(!empty($userDeviceDetails)) {
                 pushToMobile($userDeviceDetails, $title, $chatBody);
             }
