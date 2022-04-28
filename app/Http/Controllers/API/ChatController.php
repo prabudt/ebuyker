@@ -13,6 +13,7 @@ use App\Models\UsersBasedLoadBook;
 use App\Models\UsersBasedLoadBookChat;
 use App\Models\Loads;
 use App\Models\UserDevices;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
@@ -143,7 +144,7 @@ class ChatController extends Controller
             return $this->validationError($errors);
         }
         
-        $bookingList = UsersBasedLoadBook::where('booking_id', $params['booking_id'])->where('user_id', JWTAuth::user()->id)->where('approval_flag', 0)->first();
+        $bookingList = UsersBasedLoadBook::with(['booking.loads'])->where('booking_id', $params['booking_id'])->where('user_id', JWTAuth::user()->id)->where('approval_flag', 0)->first();
         if(!empty($bookingList)) {
             $bookingList->update(['approval_flag'=> 1]);
 
@@ -158,11 +159,14 @@ class ChatController extends Controller
            
             $title = 'Ebuyker - Chat Amount Conversation';
             $chatBody = JWTAuth::user()->name.' was Approved for this amount:'.$params['amount'];
-           
-            $userDeviceDetails = UserDevices::where('user_id', $result->loads->id)->where('active_flag',1)->first();
-            if(!empty($userDeviceDetails)) {
-                pushToMobile($userDeviceDetails, $title, $chatBody);
+            if(isset( $bookingList->booking->loads->user_id)) {
+                Log::info('working');
+                $userDeviceDetails = UserDevices::where('user_id', $bookingList->booking->loads->user_id)->where('active_flag',1)->first();
+                if(!empty($userDeviceDetails)) {
+                    pushToMobile($userDeviceDetails, $title, $chatBody);
+                }
             }
+            
 
             return $this->sendSuccess($result, 'Booked Successfully');
         } else {
@@ -192,9 +196,10 @@ class ChatController extends Controller
         
         $bookingList = UsersBasedLoadBook::where('id', $params['user_booking_id'])->where('approval_flag', 1)->first();
         if(!empty($bookingList)) {
-
+            $getAmountData = UsersBasedLoadBookChat::where('users_based_load_book_id', $bookingList->id)->orderby('id','desc')->first();
+            $amount = $getAmountData->amount;
             $result = Booking::with(['loads'])->where('approval_flag', 0)->find($bookingList->booking_id);
-            $resultUpdate = ['approval_flag'=> 1, 'booking_amount' => $params['amount'], 'user_id' => JWTAuth::user()->id];
+            $resultUpdate = ['approval_flag'=> 1, 'booking_amount' =>$amount, 'user_id' => JWTAuth::user()->id];
             $result->update($resultUpdate);
 
             //Load Book
