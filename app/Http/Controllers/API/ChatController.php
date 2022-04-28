@@ -196,8 +196,11 @@ class ChatController extends Controller
         
         $bookingList = UsersBasedLoadBook::where('id', $params['user_booking_id'])->where('approval_flag', 1)->first();
         if(!empty($bookingList)) {
+
             $bookingList->update(['customer_approval_flag', 1]);
-            $getAmountData = UsersBasedLoadBookChat::where('users_based_load_book_id', $bookingList->id)->orderby('id','desc')->first();
+            Log::info('working'. \json_encode($bookingList));
+            $getAmountData = UsersBasedLoadBookChat::where('users_based_load_book_id', $bookingList->id)
+            ->orderby('id','desc')->first();
             $amount = $getAmountData->amount;
             $result = Booking::with(['loads'])->where('approval_flag', 0)->find($bookingList->booking_id);
             $resultUpdate = ['approval_flag'=> 1, 'booking_amount' =>$amount, 'user_id' => JWTAuth::user()->id];
