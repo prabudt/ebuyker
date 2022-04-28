@@ -98,7 +98,7 @@ class Loads extends Model
         $returnData = 0;
         $bookingData = [];
         if( JWTAuth::user()->user_type_id != 2) { 
-            $bookingData = Booking::where('load_id', $this->id)->where('user_id', JWTAuth::user()->id )->first();
+            $bookingData = Booking::where('load_id', $this->id)->first();
         }
         if(!empty($bookingData) && JWTAuth::user()->user_type_id != 2) {
             $returnData = ($bookingData->approval_flag == 1 || $this->approval_flag == 1) ? 1 : 2;
