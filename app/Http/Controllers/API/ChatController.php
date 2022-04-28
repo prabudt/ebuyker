@@ -168,7 +168,7 @@ class ChatController extends Controller
             }
             
 
-            return $this->sendSuccess($result, 'Booked Successfully');
+            return $this->sendSuccess($bookingList, 'Booked Successfully');
         } else {
             return $this->validationError('Oops! Load does not exist or Already Booked.');
         }
