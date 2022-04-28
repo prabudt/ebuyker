@@ -51,7 +51,7 @@ if (! function_exists('pushToMobile')) {
     {
         try {
             $url = 'https://fcm.googleapis.com/fcm/send';
-            $serverKey = 'AAAATpggYt4:APA91bH-2v1Ww9qShW52oQlRHrSncooWsRrEIqbMCZY2N4nFNlVKmW-lh3pBIIc345Ixzs3Qca4zVSw-Zh_yqlBMNejLVxUmSu5W5mmfI_eqX0Tindokfl9MnQCmCnYRNHmIyfCoCvnI';
+            $serverKey = 'duc5x2pu5PQ:APA91bE0ddy7mNri9AvGed4YTwq1W86aT1bImzxvgaCzJSOfJhW2ZwPcZ-aRTFcBMpWisIE9W0ss61EC9EQAlg8BQKaPln8EVheZI74KO56IC9l0q54_kavDeAfRnkZmFefpoVzPgZMp';
 
             $data = [
                 "to" => $data->push_token,
