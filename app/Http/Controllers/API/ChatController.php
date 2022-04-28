@@ -208,7 +208,7 @@ class ChatController extends Controller
             $resultLoad->update($resultLoadUpdate);
            
             $title = 'Ebuyker - Chat Amount Conversation';
-            $chatBody = JWTAuth::user()->name.' was Approved for this amount:'.$params['amount'];
+            $chatBody = JWTAuth::user()->name.' was Approved for this amount:'.$amount;
            
             $userDeviceDetails = UserDevices::where('user_id', $bookingList->user_id)->where('active_flag',1)->first();
             if(!empty($userDeviceDetails)) {
