@@ -32,6 +32,7 @@ class UsersBasedLoadBook extends Model
         'booking_id ',
         'user_id',
         'approval_flag',
+        'customer_approval_flag',
         'limit_count'
     ];
 
