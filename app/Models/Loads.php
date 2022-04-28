@@ -104,8 +104,8 @@ class Loads extends Model
             $returnData = ($bookingData->approval_flag == 1 || $this->approval_flag == 1) ? 1 : 2;
         } else if(JWTAuth::user()->user_type_id == 2) {
             $bookingDatas = Booking::where('load_id', $this->id)->orderBy('approval_flag','desc')->first();
-            dd($bookingDatas);
             $returnData =  (!empty($bookingDatas) && $bookingDatas->approval_flag == 0) ? 2 : ($this->approval_flag == 1) ? 1 : 0;
+            dd($returnData);
         }
         return $returnData;
     }
