@@ -110,7 +110,7 @@ class Loads extends Model
                 $returnData = 1;
             }
             // $returnData =  (!empty($bookingDatas) && $bookingDatas->approval_flag == 0) ? 2 : ($this->approval_flag == 1) ? 1 : 0;
-            dd($returnData);
+            // dd($returnData);
         }
         return $returnData;
     }
