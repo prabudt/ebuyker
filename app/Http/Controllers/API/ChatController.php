@@ -225,7 +225,6 @@ class ChatController extends Controller
     public function show($id)
     {
         $result = Booking::with(['loads'])->where('approval_flag', 0)->find($id);
-        dd($result );
         if(!empty($result)) {
             $userBasedBookChatCount = UsersBasedLoadBookChat::with(['userBasedChat'])
             ->whereHas('userBasedChat', function($q) use($id) {
