@@ -234,7 +234,7 @@ class LoadController extends Controller
         });
         $data = $data->orderBy('id', 'desc')->get();
         
-        $result = collect();
+       /*  $result = collect();
         if( JWTAuth::user()->user_type_id != 2) {
             if(count($data) > 0) {
                 foreach ($data as $key => $value) {
@@ -251,7 +251,7 @@ class LoadController extends Controller
             }
         } else {
             $result = $data;
-        }
-        return $this->sendSuccess($result);
+        } */
+        return $this->sendSuccess($data);
     }
 }
