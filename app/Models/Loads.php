@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
-
+use JWTAuth;
 use App\Models\Booking;
 
 class Loads extends Model
@@ -95,8 +95,17 @@ class Loads extends Model
         return ($currentDate <= $pickupdate) ? 0 : 1;
     }
     public function getBookingStatusAttribute() {
-        $bookingData =Booking::where('load_id', $this->id)->first();
-        return (!empty($bookingData)) ? ($bookingData->approval_flag == 1) ? 1: 2 : 0;
+        $returnData = 0;
+        $bookingData = [];
+        if( JWTAuth::user()->user_type_id != 2) { 
+            $bookingData = Booking::where('load_id', $this->id)->where('user_id', JWTAuth::user()->id )->first();
+        }
+        if(!empty($bookingData) && JWTAuth::user()->user_type_id != 2) {
+            $returnData = ($bookingData->approval_flag == 1) ? 1 : 2;
+        } else {
+            $returnData =  ($this->approval_flag == 1) ? 1 : 0;
+        }
+        return $returnData;
     }
 
     public function getLimitCountAttribute() {
