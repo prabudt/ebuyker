@@ -102,8 +102,9 @@ class Loads extends Model
         }
         if(!empty($bookingData) && JWTAuth::user()->user_type_id != 2) {
             $returnData = ($bookingData->approval_flag == 1 || $this->approval_flag == 1) ? 1 : 2;
-        } else {
-            $returnData =  ($this->approval_flag == 1) ? 1 : 0;
+        } else if(JWTAuth::user()->user_type_id == 2) {
+            $bookingDatas = Booking::where('load_id', $this->id)->orderBy('approval_flag','desc')->first();
+            $returnData =  (!empty($bookingDatas) && ($bookingDatas == 0)) ? 2: ($this->approval_flag == 1) ? 1 : 0;
         }
         return $returnData;
     }
