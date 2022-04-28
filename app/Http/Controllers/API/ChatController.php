@@ -196,9 +196,8 @@ class ChatController extends Controller
         
         $bookingList = UsersBasedLoadBook::where('id', $params['user_booking_id'])->where('approval_flag', 1)->first();
         if(!empty($bookingList)) {
-            dd( $bookingList);
-           $updateData =  UsersBasedLoadBook::where('id', $params['user_booking_id'])->where('approval_flag', 1)
-           ->update(['customer_approval_flag', 1]);
+            $updateData =  UsersBasedLoadBook::where('id', $params['user_booking_id'])->update(['customer_approval_flag', 1]);
+            dd($bookingList);
             Log::info('working'. \json_encode($updateData));
             $getAmountData = UsersBasedLoadBookChat::where('users_based_load_book_id', $bookingList->id)
             ->orderby('id','desc')->first();
